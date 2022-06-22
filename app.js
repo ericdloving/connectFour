@@ -38,7 +38,7 @@ function move(col) {
     peaks[col]++;
     board[row][col] = turnColor;
     drawMove(row,col);
-    //if(isWin(row,col)) declareWinner(turnColor);
+    if(isWin(row,col)) declareWinner(turnColor);
     //else turnColor === 'red' ? 'yellow' : 'red';
     if (turnColor == 'red') turnColor = 'yellow';
     else turnColor = 'red';
@@ -46,7 +46,7 @@ function move(col) {
 
 /* Checking for a win */
 function isWin(row, col) {
-    console.log(checkVertical(row,col))
+
     return checkVertical(row, col) ||
            checkHorizontal(row, col) ||
            checkDiagonal(row, col);
@@ -55,60 +55,97 @@ function isWin(row, col) {
 function checkVertical(row, col){
     //if the column isn't at least 4 high, a vertical win is impossible
     if (row < 3) return false;
-
-    else return board[row-1][col] ===
-                board[row-2][col] ===
-                board[row-3][col] ===
-                board[row-4][col];
+    const threeBelow = [ //compare board elements below to turnColor
+        board[row-1][col],
+        board[row-2][col],
+        board[row-3][col]]
+    return (threeBelow[0]==turnColor &&
+            threeBelow[1]==turnColor &&
+            threeBelow[2]==turnColor);
 }
 
 function checkHorizontal(row, col) {
     let count=1;
+    
     //count the length of the leftward run:
-    for (let i=0;i < 6; i++) {
-        if (i > col) break;
-        if (board[row][col - i] === turnColor){
-            count++
+    for (let i=1;i < colCount-1; i++) {
+        if (i > col) break; //out of left bound
+        if (board[row][col - i] == board[row][col]){
+            count++;
         } else break;
     }
      //count the length of the rightward run:
-     for (let i=0;i < 6; i++) {
+     for (let i=1;i < 6; i++) {
         if (i + col > 6) break;
-        if (board[row][col + i] === turnColor){
-            count++
+        if (board[row][col + i] == board[row][col]){
+            count++;
         } else break;
      }
      return count > 3;
 }
-function checkDiagonal() {return false;}
 
 function checkDiagonal(row, col) {
     let count = 1;
+    let descendingLeg = [], ascendingLeg = [];
 
-    //add top-left to bottom-right
-    for(let i = 0; i < 5; i++) {
-        if (board[row-i][col-i] === turnColor) count++;
-        else break;
+    //put 7 values in each line of the X centered on the current move
+    for(let i = 0;i < 7; i++) { 
+       let ascendingElement = false;
+       let descendingElement = false;
+       try {
+           ascendingElement = board[row-3+i][col-3+i];
+       } catch(error) { ascendingLeg[i]='OOB'; }
+       if (ascendingElement) ascendingLeg[i]=ascendingElement;
+       try {
+           descendingElement = board[row+3-i][col-3+i];
+       } catch(error) { descendingLeg[i]='OOB'; }
+       if (descendingElement) descendingLeg[i]=descendingElement;      
     }
-    for(let i = 0; i < 5; i++) {
-        if (board[row+i][col+i] === turnColor) count++;
-        else break;
-    }
-    if (count > 3) return true;
-    count = 1; //get rid of the failed count
-    
-    //add bottom-left to top-right 
-    for (let i = 0; i < 5; i++) {
-        if (board[row+i][col-i] === turnColor) count++;
-        else break;
-    }
-    for (let i = 0; i < 5; i++) {
-        if (board[row-i][col+i] === turnColor) count++;
-        else break;
-    }
-    if (count > 3) return true;
-    return false;
+    return(descendingLeg.join('').includes('redredredred') ||
+           descendingLeg.join('').includes('yellowyellowyellowyellow') ||
+           ascendingLeg.join('').includes('redredredred') ||
+           ascendingLeg.join('').includes('yellowyellowyellowyellow'));
+
 }
+
+//     //add top-left to bottom-right
+//     for(let i = 1; i < 5; i++) { 
+//         if (board[row+i][col-i]== turnColor) {
+//             count++; 
+//             console.log(count,"count");
+//         }
+//         else break;
+//     }
+//     for(let i = 1; i < 5; i++) {
+//         if(row < i) break;
+//         if (board[row-i][col+i] == turnColor) {
+//             count++; 
+//             console.log(count,"count");
+//         }
+//         else break;
+//     }
+//     if (count > 3) return true;
+//     count = 1; //get rid of the failed count
+    
+//     //add bottom-left to top-right 
+//     for (let i = 1; i < 5; i++) {
+//         if (board[row+i][col-i] === turnColor) {
+//             count++; 
+//             console.log(count,"count");
+//         }
+//         else break;
+//     }
+//     for (let i = 1; i < 5; i++) {
+//         if (row < i) break;
+//         if (board[row-i][col+i] === turnColor) {
+//             count++; 
+//             console.log(count,"count");
+//         }
+//         else break;
+//     }
+//     if (count > 3) return true;
+//     return false;
+// }
 
 
 /*****************************************************
