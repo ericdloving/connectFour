@@ -1,6 +1,11 @@
+body {
+    background-image : url(http://1-background.com/images/stars-1/star-space-tile.jpg);
+}
 app {
     display:flex;
     flex-direction: column;
+    justify-content: center;
+    align-items:center;
 }
 
 form {
@@ -12,6 +17,11 @@ form {
 
 input {
     flex:1;
+    disabled: false;
+}
+
+.disabled {
+    disabled: true;
 }
 
 .gameBoard {
@@ -19,13 +29,15 @@ input {
     flex-direction:row;
     justify-content:center;
     background:lightskyblue;
+    width:400px;
 }
 
 .pendingTokenSpace{
+    margin-bottom: 10px;
     display:flex;
     flex-direction:row;
     justify-content:center;
-    background:darkolivegreen;
+    background:none;
 }
 .column {
     display:flex;
@@ -64,4 +76,14 @@ input {
     width:50px;
     height:50px;
     margin:2px;
+}
+
+.bottomButton {
+    display: flex;
+    height : 50px;
+    width : 50px;
+    margin-top: 10px;
+    background : url("images/button.png") no-repeat top left;
+    text : "start"
+
 }

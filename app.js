@@ -12,6 +12,10 @@
 /* Initial game state setup */
 const board = [[],[],[],[],[],[]]
 let redPlayerName, yellowPlayerName;
+let gameInProgress = true;
+let buttonState='start';
+let mode = 'twoPlayer';
+
 
 
 let colCount = 7;
@@ -28,20 +32,17 @@ for (let i = 0;i < colCount; i++){
 
 let turnColor='red';
 
-
-
-
-
 /* Accepting & presenting the player's move */
-function move(col) {
+function move(col) { console.log(gameInProgress);
+    if (gameInProgress) {
     let row=peaks[col];
     peaks[col]++;
     board[row][col] = turnColor;
     drawMove(row,col);
     if(isWin(row,col)) declareWinner(turnColor);
-    //else turnColor === 'red' ? 'yellow' : 'red';
     if (turnColor == 'red') turnColor = 'yellow';
     else turnColor = 'red';
+    }
 }
 
 /* Checking for a win */
@@ -101,6 +102,8 @@ function checkDiagonal(row, col) {
        } catch(error) { descendingLeg[i]='OOB'; }
        if (descendingElement) descendingLeg[i]=descendingElement;      
     }
+    //each leg array contains half the X -- if either leg has 4 connected tokens,
+    //   then this is a winning play
     return(descendingLeg.join('').includes('redredredred') ||
            descendingLeg.join('').includes('yellowyellowyellowyellow') ||
            ascendingLeg.join('').includes('redredredred') ||
@@ -108,60 +111,12 @@ function checkDiagonal(row, col) {
 
 }
 
-//     //add top-left to bottom-right
-//     for(let i = 1; i < 5; i++) { 
-//         if (board[row+i][col-i]== turnColor) {
-//             count++; 
-//             console.log(count,"count");
-//         }
-//         else break;
-//     }
-//     for(let i = 1; i < 5; i++) {
-//         if(row < i) break;
-//         if (board[row-i][col+i] == turnColor) {
-//             count++; 
-//             console.log(count,"count");
-//         }
-//         else break;
-//     }
-//     if (count > 3) return true;
-//     count = 1; //get rid of the failed count
-    
-//     //add bottom-left to top-right 
-//     for (let i = 1; i < 5; i++) {
-//         if (board[row+i][col-i] === turnColor) {
-//             count++; 
-//             console.log(count,"count");
-//         }
-//         else break;
-//     }
-//     for (let i = 1; i < 5; i++) {
-//         if (row < i) break;
-//         if (board[row-i][col+i] === turnColor) {
-//             count++; 
-//             console.log(count,"count");
-//         }
-//         else break;
-//     }
-//     if (count > 3) return true;
-//     return false;
-// }
-
 
 /*****************************************************
 **                                                  **
 **             DRAWING THE BOARD                    **
 **                                                  **
 *****************************************************/
-
-// style the start bar
-const redPlayerBox=document.getElementById('redPlayer')
-const yellowPlayerBox=document.getElementById('yellowPlayer');
-redPlayerBox.style.backgroundColor = `red`;
-redPlayerBox.style.color='white';
-yellowPlayerBox.style.backgroundColor='yellow';
-yellowPlayerBox.style.color='darkBlue';
-
 
 //  Draw the holding area (for a pending token drop)
 const dropZone = document.getElementById('holdingArea');
@@ -190,7 +145,10 @@ function moveRight() {
 
 //  Create the columns of the game board
 const gameDisplay = document.getElementById('theBoard');
+
+function drawTheBoard() {
 let currentColumn = []
+
 for (let c = 0; c < colCount ; c++){ 
     currentColumn = [];
     for(let r = 0; r < rowCount; r++) {
@@ -198,6 +156,7 @@ for (let c = 0; c < colCount ; c++){
     }
     drawColumn(currentColumn,c);
 }
+
 function drawColumn(column,colNum) { 
     const newColumn = document.createElement('div');
     newColumn.className=`column`;
@@ -211,6 +170,20 @@ function drawColumn(column,colNum) {
         newColumn.appendChild(newCell);
     }
 }
+}
+
+//add a button
+const bottomSection = document.getElementById('foot');
+const theOtherButton = document.createElement('button');
+theOtherButton.setAttribute('type', 'button');
+theOtherButton.setAttribute('value','start');
+theOtherButton.setAttribute('class','bottomButton');
+bottomSection.appendChild(theOtherButton);
+
+function toggleButtonState() {
+    buttonState = (buttonState == 'start' ? 'reset' : 'start');
+    alert(`toggleButtonState changed the buttonState to ${buttonState}`);
+}
 
 function drawMove(row, column) {
     const currentMoveCell = document.getElementById(`row${row}Col${column}`);
@@ -221,28 +194,70 @@ function drawMove(row, column) {
 
 /* Reacting to a win */
 function declareWinner() {
-    alert(`${turnColor} wins!`)
+    
+    gameInProgress=false;
+    try {
+    dropZone.children[tokenColumn].setAttribute('class','empty')}
+    catch (error ){}
+    setTimeout(() => alert(`${turnColor == 'red' ? redPlayerName : yellowPlayerName} wins!`),2);
+
 }
 
+function convertButton() {
+    alert('convertButton',buttonState,);
+    alert(buttonState);
+    if (buttonState === 'start') {
+        toggleButtonState();
+        theButton.value = 'RESET';
+        if (!redPlayerName) redPlayerName = 'Blinky';
+        if (!yellowPlayerName) yellowPlayerName = 'Clyde';
+        if (mode = 'onePlayer') yellowPlayerName = 'Computer';
+        redPlayerBox.value = redPlayerName;
+        redPlayerBox.className = "disabled";
+        yellowPlayerBox.className = "disabled";
+        gameInProgress=true;
 
+
+    }
+} 
+drawTheBoard();
+/*****************************************************
+**                                                  **
+**            USER-FACING CONTROLS                  **
+**                                                  **
+*****************************************************/
+const theButton = document.getElementById('startButton');
+
+// style the start bar
+const redPlayerBox=document.getElementById('redPlayer')
+const yellowPlayerBox=document.getElementById('yellowPlayer');
+redPlayerBox.style.backgroundColor = `red`;
+redPlayerBox.style.color='white';
+redPlayerBox.setAttribute('class','disabled');
+yellowPlayerBox.setAttribute('class','disabled');
 
 /*****************************************************
 **                                                  **
-**           UI EVENT LISTENERS                     **
+**                EVENT LISTENERS                   **
 **                                                  **
 *****************************************************/
 
 
-const theButton = document.getElementById('startButton');
-let buttonState='start';
-theButton.addEventListener('click', function () {
-    alert('the button is for another day');
+
+theOtherButton.addEventListener('click', function () {
+    convertButton()
+    
 
 })
-
+/***********--  KEYBOARD CONTROLS -- ************** */
 document.addEventListener("keydown", function(event) {
+    if (!gameInProgress) return;
+
     const key = event.key;
     switch (key) {
+        case "s" :
+            convertButton();
+            break;
         case "ArrowLeft" :
             moveLeft();
             break;
@@ -255,3 +270,4 @@ document.addEventListener("keydown", function(event) {
             break;
     }
 })
+/**********--    MOUSE CONTROLS --******************** */
