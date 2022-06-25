@@ -13,6 +13,7 @@ let mode = "twoPlayer";
 let colCount = 7;
 let rowCount = 6;
 let peaks = [];
+let flashTime = 300;
 
 function boardInit() {
   //clear the board, if this is a reset
@@ -55,9 +56,20 @@ function move(col) {
     else turnColor = "red";
   }
 }
+function morePlaysExist() {
+  return board.includes('empty');
+}
 
 /* Checking for a win */
 function isWin(row, col) {
+  if (morePlaysExist()) {
+    if (checkVertical(row,col)||checkHorizontal(row,col)||checkDiagonal(row,col)) return true;
+    alert("It's a draw");
+    boardInit();
+    clearTheBoard();
+    gameInProgress = false;
+
+  }
   return (
     checkVertical(row, col) ||
     checkHorizontal(row, col) ||
@@ -220,11 +232,37 @@ theOtherButton.innerText="2P"
 bottomSection.appendChild(theButton);
 bottomSection.appendChild(theOtherButton);
 
-
-function drawMove(row, column) {
-  const currentMoveCell = document.getElementById(`row${row}Col${column}`);
-  currentMoveCell.className = turnColor;
+function animateCell(elem) {
+  elem.className = turnColor;
+  setTimeout(elem.setAttribute,flashTime + 1,['class', 'blank']);
 }
+
+//Non-animated but functional move rendering:
+function drawMove(row, column) {
+  const currentMoveCell = document.getElementById(`row${row}Col${column}`); // <--
+  currentMoveCell.className = turnColor;
+
+  for (let i = peaks[column]; i < rowCount; i++){
+    let loopElem = document.getElementById(`row${i}Col${column}`);
+    let waitTime = i * flashTime + 1;
+    setTimeout(animateCell,waitTime,[loopElem]);
+  }
+}
+ 
+//experimental animated move rendering function -- delete and uncomment above
+//version to make the app work.
+// function drawMove (row,column) {
+//     //dropZone.childNodes[column].className = 'empty'
+//     let stepCount = rowCount - row;
+//     for ( let i = 0; i < stepCount; i++) {
+//       let waitTime = i * flashTime;
+//       let loopCell = document.getElementById(`row${rowCount - 1 - i}Col${column}`);
+//       setTimeout(drawMove,waitTime,loopCell);
+//     }
+//     let targetCell = document.getElementById(`row${row}Col${column}`);
+//     setTimeout(targetCell.setAttribute,stepCount * flashTime,['class',turnColor])
+
+// }
 
 /* Reacting to a win */
 function declareWinner() {
@@ -250,6 +288,7 @@ function buttonStuff(id) {
 
   }
   redPlayerName = redPlayerBox.value;  
+  if(!redPlayerName) redPlayerName = "Blinky";
 
   if(id==='1p') {
     mode = "onePlayer";
