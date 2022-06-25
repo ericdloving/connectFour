@@ -38,7 +38,7 @@ let turnColor = "red";
 
 /* Accepting & presenting the player's move */
 function move(col) {
-  console.log(gameInProgress);
+
   if (gameInProgress) {
     let row = peaks[col];
     peaks[col]++;
@@ -245,27 +245,28 @@ function declareWinner() {
 }
 
 function buttonStuff(id) {
-  alert(`buttonStuff(${id})`)
-  if (gameInProgress) { //ignore the button during an active game
+  if (gameInProgress == true) { //ignore the button during an active game
     return true;
-    alert("buttonstuff return")
+
   }
-  redPlayerName = redPlayerBox.innerText;  /* IS THIS GETTING ANY INPUT?? */
+  redPlayerName = redPlayerBox.value;  
+
   if(id==='1p') {
     mode = "onePlayer";
     yellowPlayerName = 'Computer';
+    yellowPlayerBox.value = 'Computer';
     turnColor = "red";
-    alert("buttonStuff2")
+
   }
   else {
     mode = "twoPlayer";
     yellowPlayerName  = yellowPlayerBox.innerText;
-    alert("buttonStuff3")
+
   }
   gameInProgress = true;
   theButton.setAttribute("display","none");
   theOtherButton.setAttribute("display","none")
-  alert("buttonStuff4")
+
   
 }
 
@@ -278,13 +279,14 @@ drawTheBoard();
  *****************************************************/
 
 
-// style the start bar
-const redPlayerBox = document.getElementById("redPlayer");
-const yellowPlayerBox = document.getElementById("yellowPlayer");
+// style the input bar
+const redPlayerBox = document.getElementsByTagName('input')[0];
+const yellowPlayerBox = document.getElementsByTagName('input')[1];
 redPlayerBox.style.backgroundColor = `red`;
 redPlayerBox.style.color = "white";
-redPlayerBox.setAttribute("class", "disabled");
-yellowPlayerBox.setAttribute("class", "disabled");
+yellowPlayerBox.style.backgroundColor = 'yellow';
+
+
 
 /*****************************************************
  **                                                  **
@@ -292,11 +294,11 @@ yellowPlayerBox.setAttribute("class", "disabled");
  **                                                  **
  *****************************************************/
 theButton.addEventListener("click", function () {
-  alert("button1");
+  
   buttonStuff('1p');
 });
 theOtherButton.addEventListener("click", function () {
-  alert("button2");
+
   buttonStuff('2p');
 });
 /***********--  KEYBOARD CONTROLS -- ************** */
@@ -358,14 +360,27 @@ function botMove() {
       targetColumn = Math.floor(Math.random() * 6);
     }
   }
-  //Hal has decided where to play
+  // Hal has decided where to play--
   //  execute the move:
-  while (targetColumn > tokenColumn) {
-    moveRight();
+  let botMovementId; //label for the interval that governs the left/right movement of Hal's token
+  if (targetColumn > tokenColumn) {
+    botMovementId = setInterval(moveRight,300)
+    setTimeout(clearInterval,301 * (targetColumn - tokenColumn),botMovementId);
   }
-  while (targetColumn < tokenColumn) {
-    moveLeft();
+
+  if (targetColumn < tokenColumn) {
+    botMovementId = setInterval(moveLeft, 300)
+    setTimeout(clearInterval,301 * (tokenColumn - targetColumn),botMovementId);
   }
-  move(tokenColumn);
+  
+  
+  setTimeout(function(target) {
+    move(target);
+    dropZone.childNodes[tokenColumn].className = 'red';
+  },300 + 303 * Math.abs(targetColumn - tokenColumn),targetColumn);
+
+
+
+
 }
 
