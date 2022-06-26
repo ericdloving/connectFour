@@ -1,3 +1,6 @@
+//   ¡Conectar Cuatro! by Eric Loving
+//                               2022
+
 /*****************************************************
  **                                                  **
  **                 GAME LOGIC                       **
@@ -5,18 +8,17 @@
  *****************************************************/
 
 /* Initial game state setup */
-const board = [[], [], [], [], [], []];
-let redPlayerName, yellowPlayerName;
-let gameInProgress = false;
-let buttonState = "start";
+const board = [[], [], [], [], [], []];   //each internal array is a row.
+let redPlayerName, yellowPlayerName;    
+let gameInProgress = false;               //to update controls appropriately
 let mode = "twoPlayer";
-let colCount = 7;
-let rowCount = 6;
-let peaks = [];
-let flashTime = 300;
+let colCount = 7;    //for future functionality -- not all code segments
+let rowCount = 6;    //  currently support dynamic grid size.
+let peaks = [];      
+const startMsg = "Enter Names Above & Press Start (1P / 2P)";
 
 function boardInit() {
-  //clear the board, if this is a reset
+  //clear the board
   for (let r = 0; r < rowCount; r++) {
     while (board[r][0]) {
       board[r].pop();
@@ -28,18 +30,17 @@ function boardInit() {
       board[r].push("blank");
     }
   }
-  
   peaks.length = 0;
   for (let i = 0; i < colCount; i++) {
     peaks.push(0);
   }
 }
+//wrap up game state setup
 boardInit();
 let turnColor = "red";
 
-/* Accepting & presenting the player's move */
+/* Accepting the players' moves and calling for visual updates */
 function move(col) {
-
   if (gameInProgress) {
     let row = peaks[col];
     peaks[col]++;
@@ -51,24 +52,27 @@ function move(col) {
     }
     if (turnColor == "red") {
       turnColor = "yellow";
-      if (mode=="onePlayer") botMove();
-    }
-    else turnColor = "red";
+      if (mode == "onePlayer") botMove();
+    } else turnColor = "red";
   }
 }
-function morePlaysExist() {
-  return board.includes('empty');
+function morePlaysExist() {  //if false, it's a draw
+  return board.includes("empty");
 }
 
 /* Checking for a win */
 function isWin(row, col) {
   if (morePlaysExist()) {
-    if (checkVertical(row,col)||checkHorizontal(row,col)||checkDiagonal(row,col)) return true;
+    if (
+      checkVertical(row, col) ||
+      checkHorizontal(row, col) ||
+      checkDiagonal(row, col)
+    )
+      return true;
     alert("It's a draw");
     boardInit();
     clearTheBoard();
     gameInProgress = false;
-
   }
   return (
     checkVertical(row, col) ||
@@ -193,7 +197,7 @@ function drawTheBoard() {
   function drawColumn(column, colNum) {
     const newColumn = document.createElement("div");
     newColumn.className = `column`;
-    newColumn.id = `column${column}`;
+    newColumn.id = `column${colNum}`;
     gameDisplay.appendChild(newColumn);
 
     for (let i = 0; i < 6; i++) {
@@ -217,52 +221,13 @@ function clearTheBoard() {
   //dispose of the token positions
   boardInit();
   drawTheBoard();
+  messageArea.innerText = startMsg;
 }
 
-//add a button
-const bottomSection = document.getElementById("foot");
-bottomSection.setAttribute("display", "flex")
-bottomSection.setAttribute("flex-direction","row");
-const theButton = document.createElement("div");
-const theOtherButton = document.createElement("div");
-theButton.innerText = "1P";
-theButton.setAttribute("class", "bottomButton1");
-theOtherButton.setAttribute("class", "bottomButton2");
-theOtherButton.innerText="2P"
-bottomSection.appendChild(theButton);
-bottomSection.appendChild(theOtherButton);
-
-function animateCell(elem) {
-  elem.className = turnColor;
-  setTimeout(elem.setAttribute,flashTime + 1,['class', 'blank']);
-}
-
-//Non-animated but functional move rendering:
 function drawMove(row, column) {
-  const currentMoveCell = document.getElementById(`row${row}Col${column}`); // <--
-  currentMoveCell.className = turnColor;
-
-  for (let i = peaks[column]; i < rowCount; i++){
-    let loopElem = document.getElementById(`row${i}Col${column}`);
-    let waitTime = i * flashTime + 1;
-    setTimeout(animateCell,waitTime,[loopElem]);
-  }
+  const moveCell = document.getElementById(`row${row}Col${column}`);
+  moveCell.className = turnColor;
 }
- 
-//experimental animated move rendering function -- delete and uncomment above
-//version to make the app work.
-// function drawMove (row,column) {
-//     //dropZone.childNodes[column].className = 'empty'
-//     let stepCount = rowCount - row;
-//     for ( let i = 0; i < stepCount; i++) {
-//       let waitTime = i * flashTime;
-//       let loopCell = document.getElementById(`row${rowCount - 1 - i}Col${column}`);
-//       setTimeout(drawMove,waitTime,loopCell);
-//     }
-//     let targetCell = document.getElementById(`row${row}Col${column}`);
-//     setTimeout(targetCell.setAttribute,stepCount * flashTime,['class',turnColor])
-
-// }
 
 /* Reacting to a win */
 function declareWinner() {
@@ -275,70 +240,75 @@ function declareWinner() {
       alert(`${turnColor == "red" ? redPlayerName : yellowPlayerName} wins!`),
     2
   );
-  setTimeout(
-    () => {
-      clearTheBoard();
-    },3
-  )
+  setTimeout(() => {
+    clearTheBoard();
+  }, 3);
 }
 
 function buttonStuff(id) {
-  if (gameInProgress == true) { //ignore the button during an active game
+  if (gameInProgress == true) {
+    //ignore the button during an active game
     return true;
-
   }
-  redPlayerName = redPlayerBox.value;  
-  if(!redPlayerName) redPlayerName = "Blinky";
+  redPlayerName = redPlayerBox.value;
+  if (!redPlayerName) {
+    redPlayerName = "Blinky";
+    redPlayerBox.value = redPlayerName;
+  }
 
-  if(id==='1p') {
+  if (id === "1p") {
     mode = "onePlayer";
-    yellowPlayerName = 'Computer';
-    yellowPlayerBox.value = 'Computer';
+    yellowPlayerName = "Computer";
+    yellowPlayerBox.value = "Computer";
     turnColor = "red";
-
-  }
-  else {
+  } else {
     mode = "twoPlayer";
-    yellowPlayerName  = yellowPlayerBox.innerText;
-
+    yellowPlayerName = yellowPlayerBox.value;
   }
   gameInProgress = true;
-  theButton.setAttribute("display","none");
-  theOtherButton.setAttribute("display","none")
-
-  
+  messageArea.innerText = "Use Arrow Keys To Play";
+  theButton.setAttribute("display", "none");
+  theOtherButton.setAttribute("display", "none");
 }
 
-
 drawTheBoard();
-/*****************************************************
+/******************************************************
  **                                                  **
  **            USER-FACING CONTROLS                  **
  **                                                  **
  *****************************************************/
-
-
+//start buttons
+const bottomSection = document.getElementById("foot");
+bottomSection.setAttribute("display", "flex");
+bottomSection.setAttribute("flex-direction", "row");
+const theButton = document.createElement("div");
+const theOtherButton = document.createElement("div");
+theButton.innerText = "1P";
+theButton.setAttribute("class", "bottomButton1");
+theOtherButton.setAttribute("class", "bottomButton2");
+theOtherButton.innerText = "2P";
+bottomSection.appendChild(theButton);
+bottomSection.appendChild(theOtherButton);
 // style the input bar
-const redPlayerBox = document.getElementsByTagName('input')[0];
-const yellowPlayerBox = document.getElementsByTagName('input')[1];
+const redPlayerBox = document.getElementsByTagName("input")[0];
+const yellowPlayerBox = document.getElementsByTagName("input")[1];
 redPlayerBox.style.backgroundColor = `red`;
 redPlayerBox.style.color = "white";
-yellowPlayerBox.style.backgroundColor = 'yellow';
+yellowPlayerBox.style.backgroundColor = "yellow";
+const messageArea = document.getElementById("bottomText");
+messageArea.innerText = startMsg;
+messageArea.setAttribute("background", "orange");
 
-
-
-/*****************************************************
+/******************************************************
  **                                                  **
  **                EVENT LISTENERS                   **
  **                                                  **
  *****************************************************/
 theButton.addEventListener("click", function () {
-  
-  buttonStuff('1p');
+  buttonStuff("1p");
 });
 theOtherButton.addEventListener("click", function () {
-
-  buttonStuff('2p');
+  buttonStuff("2p");
 });
 /***********--  KEYBOARD CONTROLS -- ************** */
 document.addEventListener("keydown", function (event) {
@@ -362,64 +332,75 @@ document.addEventListener("keydown", function (event) {
 
 // not yet implemented :-(
 
-/***************  Hal9000 **************************** */
+/******************************************************
+ **                                                  **
+ **               *** HAL 9000 ***                   **
+ **                                                  **
+ *****************************************************/
 function botMove() {
   let targetColumn;
   //can I win right now?
-  for(let i = 0; i < colCount; i++) {
-    if (peaks[i] < 5 ) { //check to see if column is not full
-      board[peaks[i]][i] = 'yellow' //test the play
-      if (isWin(peaks[i],i)) {
+  for (let i = 0; i < colCount; i++) {
+    if (peaks[i] < 5) {
+      //check to see if column is not full
+      board[peaks[i]][i] = "yellow"; //test the play
+      if (isWin(peaks[i], i)) {
         targetColumn = i;
-        board[peaks[i]][i] = "blank"  //revert the cell
+        board[peaks[i]][i] = "blank"; //revert the cell
         break;
       }
       board[peaks[i]][i] = "blank";
     }
   }
   //is there a play I MUST block now?
-  turnColor = 'red'; //think about your future, man!
+  turnColor = "red"; //think about your future, man!
   for (let i = 0; i < colCount; i++) {
     if (peaks[i] < 5) {
-      board[peaks[i]][i] = 'red' //test the play
-      if (isWin(peaks[i],i)) {
+      board[peaks[i]][i] = "red"; //test the play
+      if (isWin(peaks[i], i)) {
         targetColumn = i;
-        board[peaks[i]][i] = "blank"  //revert the cell
+        board[peaks[i]][i] = "blank"; //revert the cell
         break;
       }
       board[peaks[i]][i] = "blank";
-  
-
     }
   }
-  turnColor = 'yellow'; //back to the present
-  if(!targetColumn) { //no winning or blocking play; just play.
+  turnColor = "yellow"; //back to the present
+  if (!targetColumn) {
+    //no winning or blocking play detected; just play on a random column
     targetColumn = Math.floor(Math.random() * 6);
-    while(peaks[targetColumn] > 4) {
+    while (peaks[targetColumn] > 4) {  // picks again if the chosen column is full
       targetColumn = Math.floor(Math.random() * 6);
     }
   }
+
   // Hal has decided where to play--
   //  execute the move:
-  let botMovementId; //label for the interval that governs the left/right movement of Hal's token
-  if (targetColumn > tokenColumn) {
-    botMovementId = setInterval(moveRight,300)
-    setTimeout(clearInterval,301 * (targetColumn - tokenColumn),botMovementId);
+  let botMovementId; //ticker for animating Hal's traversal of the dropZone to get their token to the target
+  if (targetColumn > tokenColumn) {  //move toward the target column
+    botMovementId = setInterval(moveRight, 300);
+    setTimeout(  //stop the movement when you reach the target
+      clearInterval,
+      301 * (targetColumn - tokenColumn),
+      botMovementId
+    );
   }
 
   if (targetColumn < tokenColumn) {
-    botMovementId = setInterval(moveLeft, 300)
-    setTimeout(clearInterval,301 * (tokenColumn - targetColumn),botMovementId);
+    botMovementId = setInterval(moveLeft, 300);  //move toward the target column
+    setTimeout( 
+      clearInterval,
+      301 * (tokenColumn - targetColumn),
+      botMovementId
+    );
   }
-  
-  
-  setTimeout(function(target) {
-    move(target);
-    dropZone.childNodes[tokenColumn].className = 'red';
-  },300 + 303 * Math.abs(targetColumn - tokenColumn),targetColumn);
 
-
-
-
+  setTimeout(
+    function (target) {
+      move(target);  //open the pod bay doors
+      dropZone.childNodes[tokenColumn].className = "red";
+    },
+    300 + 303 * Math.abs(targetColumn - tokenColumn),
+    targetColumn
+  );
 }
-

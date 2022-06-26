@@ -1,123 +1,136 @@
 body {
-    background-image : url(http://1-background.com/images/stars-1/star-space-tile.jpg);
+  background-image: url(http://1-background.com/images/stars-1/star-space-tile.jpg);
 }
 app {
-    display:flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items:center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
 form {
-    display: flex;
-    flex-direction: row;
-    flex: 1;
-    justify-content: space-between;
+  display: flex;
+  flex-direction: row;
+  flex: 1;
+  justify-content: space-between;
 }
 
 input {
-    flex:1;
+  height: 38px;
+  width: 184px;
+  flex: 1;
+  text-align: center;
+  font-family: "Press Start 2P", cursive;
 }
-
 
 .gameBoard {
-    display:flex;
-    flex-direction:row;
-    justify-content:center;
-    background:lightskyblue;
-    width:400px;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  background: lightskyblue;
+  width: 400px;
 }
 
-.pendingTokenSpace{
-    margin-bottom: 10px;
-    display:flex;
-    flex-direction:row;
-    justify-content:center;
-    background:none;
+.pendingTokenSpace {
+  margin-bottom: 10px;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  background: none;
 }
 .column {
-    display:flex;
-    flex-direction:column-reverse;
-    justify-content: flex-start;
-    background:lightskyblue;
-
+  display: flex;
+  flex-direction: column-reverse;
+  justify-content: flex-start;
+  background: lightskyblue;
 }
 .blank {
-    background-image: url("images/blank.png");
-     background-size:contain; 
-    width:50px;
-    height:50px;
-    margin:2px;
-
+  background-image: url("images/blank.png");
+  background-size: contain;
+  width: 50px;
+  height: 50px;
+  margin: 2px;
 }
 
 .red {
-    background-image: url("images/red.png");
-    background-size:contain;
-    width:50px;
-    height:50px;
-    margin:2px;
+  background-image: url("images/red.png");
+  background-size: contain;
+  width: 50px;
+  height: 50px;
+  margin: 2px;
 }
 
 .yellow {
-    background-image: url("images/yellow.png");
-    background-size:contain;
-    width:50px;
-    height:50px;
-    margin:2px;
+  background-image: url("images/yellow.png");
+  background-size: contain;
+  width: 50px;
+  height: 50px;
+  margin: 2px;
 }
 
 .empty {
-    background-size:contain;
-    width:50px;
-    height:50px;
-    margin:2px;
+  background-size: contain;
+  width: 50px;
+  height: 50px;
+  margin: 2px;
 }
 .bottomButton1 {
-    font-family: 'Press Start 2P', cursive;
-    display: inline-block;
-    padding: 15px 25px;
-    font-size: 24px;
-    cursor: pointer;
-    text-align: center;
-    text-decoration: none;
-    outline: none;
-    color: #fff;
-    background-color: orange;
-    border: none;
-    border-radius: 15px;
-    box-shadow: 0 9px #999;
-    margin-right:20px;
-    margin-top:20px;
-  }
-  
-  .bottomButton1:hover {background-color: darkorange}
-  
-  .bottomButton1:active {
-    background-color: darkgoldenrod;
-    box-shadow: 0 5px #666;
-    transform: translateY(4px);
-  }
-    .bottomButton2 {
-        font-family: 'Press Start 2P', cursive;
-        display: inline-block;
-        padding: 15px 25px;
-        font-size: 24px;
-        cursor: pointer;
-        text-align: center;
-        text-decoration: none;
-        outline: none;
-        color: #fff;
-        background-color: orange;
-        border: none;
-        border-radius: 15px;
-        box-shadow: 0 9px #999;
-      }
-      
-      .bottomButton2:hover {background-color: darkorange}
-      
-      .bottomButton2:active {
-        background-color: darkgoldenrod;
-        box-shadow: 0 5px #666;
-        transform: translateY(4px);
-      }
+  font-family: "Press Start 2P", cursive;
+  display: inline-block;
+  padding: 15px 25px;
+  font-size: 24px;
+  cursor: pointer;
+  text-align: center;
+  text-decoration: none;
+  outline: none;
+  color: #fff;
+  background-color: orange;
+  border: none;
+  border-radius: 15px;
+  box-shadow: 0 9px #999;
+  margin-right: 20px;
+  margin-top: 20px;
+}
+
+.bottomButton1:hover {
+  background-color: darkorange;
+}
+
+.bottomButton1:active {
+  background-color: darkgoldenrod;
+  box-shadow: 0 5px #666;
+  transform: translateY(4px);
+}
+.bottomButton2 {
+  font-family: "Press Start 2P", cursive;
+  display: inline-block;
+  padding: 15px 25px;
+  font-size: 24px;
+  cursor: pointer;
+  text-align: center;
+  text-decoration: none;
+  outline: none;
+  color: #fff;
+  background-color: orange;
+  border: none;
+  border-radius: 15px;
+  box-shadow: 0 9px #999;
+}
+
+.bottomButton2:hover {
+  background-color: darkorange;
+}
+
+.bottomButton2:active {
+  background-color: darkgoldenrod;
+  box-shadow: 0 5px #666;
+  transform: translateY(4px);
+}
+
+span {
+    background: black;
+    color: white;
+    font-family: "Press Start 2p", cursive;
+    font-size: 18px;
+    margin-top: 40px;
+}
