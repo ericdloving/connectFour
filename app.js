@@ -353,7 +353,7 @@ function botMove() {
     }
   }
   //is there a play I MUST block now?
-  turnColor = "red"; //think about your future, man!
+  turnColor = "red"; //where do you see yourself three seconds from now, Blinky?
   for (let i = 0; i < colCount; i++) {
     if (peaks[i] < 5) {
       board[peaks[i]][i] = "red"; //test the play
